@@ -1,10 +1,10 @@
-# .github/workflows/ci.yml
 name: CI Pipeline (Build & Test)
 
-# This triggers when you open a Pull Request to the main branch
 on:
   pull_request:
     branches: [ "main" ]
+  push:
+    branches: [ "main" ] # Added push so it runs when you push directly to main during testing
 
 jobs:
   test-application:
@@ -14,22 +14,27 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Linting (Syntax Check)
         run: |
           pip install flake8
-          # Stop the build if there are Python syntax errors
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Stop the build if there are Python syntax errors in our app code
+          flake8 ./task1-dockerize --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: Build Docker Image
-        run: docker build -t devops-control-plane:test .
+        run: docker build -t devops-control-plane:test ./task1-dockerize
 
       - name: Start Container
         run: docker run -d -p 8501:8501 --name test-app devops-control-plane:test
 
       - name: Run Smoke Test
         run: |
-          chmod +x scripts/smoke_test.sh
-          ./scripts/smoke_test.sh
+          chmod +x task2-ci-cd/scripts/smoke_test.sh
+          ./task2-ci-cd/scripts/smoke_test.sh
 
       - name: Container Logs on Failure
         if: failure()
