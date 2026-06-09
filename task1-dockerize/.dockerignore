@@ -1,0 +1,9 @@
+__pycache__
+*.pyc
+.git
+.env
+logs/
+*.md
+Dockerfile
+docker-compose.yml
+core/executor.py
