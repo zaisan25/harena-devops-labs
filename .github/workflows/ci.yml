@@ -1,0 +1,36 @@
+# .github/workflows/ci.yml
+name: CI Pipeline (Build & Test)
+
+# This triggers when you open a Pull Request to the main branch
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-application:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Linting (Syntax Check)
+        run: |
+          pip install flake8
+          # Stop the build if there are Python syntax errors
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Build Docker Image
+        run: docker build -t devops-control-plane:test .
+
+      - name: Start Container
+        run: docker run -d -p 8501:8501 --name test-app devops-control-plane:test
+
+      - name: Run Smoke Test
+        run: |
+          chmod +x scripts/smoke_test.sh
+          ./scripts/smoke_test.sh
+
+      - name: Container Logs on Failure
+        if: failure()
+        run: docker logs test-app
