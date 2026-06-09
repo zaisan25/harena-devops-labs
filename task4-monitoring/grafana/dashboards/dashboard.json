@@ -1,0 +1,38 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "Container CPU Utilization",
+      "type": "timeseries",
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "editorMode": "code", "expr": "control_plane_cpu_percentage", "legendFormat": "CPU %", "range": true, "refId": "A" }],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "lineInterpolation": "smooth" }, "unit": "percent" } }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "title": "Container Memory Usage",
+      "type": "timeseries",
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "editorMode": "code", "expr": "control_plane_ram_percentage", "legendFormat": "RAM %", "range": true, "refId": "A" }],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line" }, "unit": "percent" } }
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "time": { "from": "now-5m", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "DevOps Control Plane Performance",
+  "version": 1
+}

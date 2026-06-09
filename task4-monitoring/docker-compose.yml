@@ -1,0 +1,49 @@
+networks:
+  monitoring:
+    driver: bridge
+
+services:
+  app:
+    image: nyharena/harena-devops-labs:latest
+    container_name: control-plane-monitored
+    ports:
+      - "8501:8501"
+      - "8000:8000"
+    volumes:
+      - app-logs:/app/logs
+      # 👇 This injects your fixed local dashboard file directly into the container
+      - ../task1-dockerize/ui/dashboard.py:/app/ui/dashboard.py
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+volumes:
+  app-logs:

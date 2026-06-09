@@ -1,0 +1,20 @@
+groups:
+  - name: control-plane-alerts
+    rules:
+      - alert: ServiceDown
+        expr: up{job="devops-control-plane"} == 0
+        for: 15s
+        labels:
+          severity: critical
+        annotations:
+          summary: "DevOps Control Plane is completely DOWN"
+          description: "The application container on port 8000 has been unreachable for over 15 seconds."
+
+      - alert: HighCPUUtilization
+        expr: control_plane_cpu_percentage > 85
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU stress detected"
+          description: "Container CPU usage has crossed resource ceilings: current value is {{ $value }}%."
