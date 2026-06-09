@@ -1,0 +1,5 @@
+# Rename this file to terraform.tfvars to override default values
+docker_hub_username = "nyharena"
+docker_repo_name    = "harena-devops-labs"
+container_name      = "custom-control-plane"
+external_port       = 8501
